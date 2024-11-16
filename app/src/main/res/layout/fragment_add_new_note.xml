@@ -6,13 +6,12 @@
     android:layout_height="match_parent"
     android:layout_marginTop="30dp"
     android:layout_marginStart="20dp"
-    android:layout_marginBottom="35dp"
     android:layout_marginEnd="20dp"
     tools:context=".AddNewNoteFragment">
 
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/tV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -24,82 +23,101 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
+
+
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="50dp"
         android:fontFamily="@font/montserrat_bolditalic"
         android:text="Title"
         android:textColor="@color/black"
         android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="@+id/textView4"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        app:layout_constraintStart_toStartOf="@+id/tV"
+        app:layout_constraintTop_toBottomOf="@+id/tV" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/title"
+
+    <android.widget.ScrollView
+        android:id="@+id/scrollViewTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:layout_marginEnd="32dp"
-        app:counterEnabled="true"
-        app:counterMaxLength="100"
+        app:layout_constraintStart_toStartOf="@+id/tvTitle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/textView6"
-        app:layout_constraintTop_toBottomOf="@+id/textView6">
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/titleInput"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/montserrat_light"
-            android:hint="Title"
-            android:textColor="@color/blue" />
-    </com.google.android.material.textfield.TextInputLayout>
+            app:counterEnabled="true"
+            app:counterMaxLength="100">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/titleInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_light"
+                android:hint="Title"
+                android:textColor="@color/blue"
+                android:maxLines="2" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </android.widget.ScrollView>
 
     <TextView
-        android:id="@+id/textView7"
+        android:id="@+id/tvDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat_bolditalic"
         android:text="Description"
         android:textColor="@color/black"
         android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="@+id/title"
-        app:layout_constraintTop_toBottomOf="@+id/title" />
+        app:layout_constraintStart_toStartOf="@+id/scrollViewTitle"
+        app:layout_constraintTop_toBottomOf="@+id/scrollViewTitle" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/description"
+
+    <android.widget.ScrollView
+        android:id="@+id/scrollViewDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        app:layout_constraintEnd_toEndOf="@+id/title"
-        app:layout_constraintStart_toStartOf="@+id/textView7"
-        app:layout_constraintTop_toBottomOf="@+id/textView7">
+        app:layout_constraintStart_toStartOf="@+id/tvDescription"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvDescription">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/descriptionInput"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/description"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:fontFamily="@font/montserrat_regular"
-            android:gravity="top"
-            android:hint="Description"
-            android:textColor="@color/black" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/descriptionInput"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:fontFamily="@font/montserrat_regular"
+                android:gravity="top"
+                android:hint="Description"
+                android:textColor="@color/black"
+                android:scrollbars="vertical" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </android.widget.ScrollView>
+
 
     <Button
         android:id="@+id/readMoreButton"
         android:layout_width="180dp"
         android:layout_height="50dp"
-        android:layout_marginBottom="48dp"
-        android:layout_weight="1"
+        android:layout_marginTop="35dp"
         android:backgroundTint="@color/blue"
         android:text="Add Note"
         app:cornerRadius="9dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/description"
-        app:layout_constraintStart_toStartOf="@+id/description"
-        app:layout_constraintTop_toBottomOf="@+id/description" />
+        app:layout_constraintEnd_toEndOf="@id/scrollViewDescription"
+        app:layout_constraintStart_toStartOf="@+id/scrollViewDescription"
+        app:layout_constraintTop_toBottomOf="@+id/scrollViewDescription" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

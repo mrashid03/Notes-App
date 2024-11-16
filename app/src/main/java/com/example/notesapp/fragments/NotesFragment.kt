@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notesapp.R
@@ -21,7 +22,11 @@ class ShowNotesFragment : Fragment() {
     private lateinit var adapter: NotesAdapter
     private lateinit var dbHelper: NotesDatabaseHelper
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_notes, container, false)
 
         dbHelper = NotesDatabaseHelper(requireContext())
@@ -42,15 +47,17 @@ class ShowNotesFragment : Fragment() {
         val account = GoogleSignIn.getLastSignedInAccount(requireContext())
         val userId = account?.id ?: ""
 
-        if(userId != null) {
+        if (userId.isNotEmpty()) {
             val notesList = dbHelper.getAllNotes(userId).toMutableList() // Convert to MutableList
             adapter = NotesAdapter(notesList,
                 onUpdateClicked = { note ->
                     val fragment = UpdateNoteFragment()
-                    val args = Bundle()
-                    args.putInt("noteId", note.id.toInt())
-                    args.putString("noteTitle", note.title)
-                    args.putString("noteContent", note.content)
+                    val args = Bundle().apply {
+                        putInt("noteId", note.id.toInt())
+                        putString("noteTitle", note.title)
+                        putString("noteContent", note.content)
+                        putString("noteDate", note.date)
+                    }
                     fragment.arguments = args
 
                     parentFragmentManager.beginTransaction()
@@ -59,14 +66,27 @@ class ShowNotesFragment : Fragment() {
                         .commit()
                 },
                 onDeleteClicked = { note ->
-                    // Delete note from database
-                    dbHelper.deleteNoteById(note.id)
-                    // Remove note from adapter
-                    adapter.removeNote(note)
+                    val builder = AlertDialog.Builder(requireContext())
+                    builder.setTitle("Delete Note")
+                        .setMessage("Are you sure you want to delete this note?")
+                        .setIcon(R.drawable.baseline_delete_24)
+                        .setPositiveButton("Yes") { dialog, _ ->
+                            // Delete note from database
+                            dbHelper.deleteNoteById(note.id)
+
+                            // Remove note from adapter
+                            adapter.removeNote(note)
+                            dialog.dismiss()
+                        }
+                        .setNegativeButton("Cancel") { dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        .create()
+                        .show()
                 }
             )
             recyclerView.adapter = adapter
-        }else{
+        } else {
             Toast.makeText(requireContext(), "Error fetching user data", Toast.LENGTH_SHORT).show()
         }
     }

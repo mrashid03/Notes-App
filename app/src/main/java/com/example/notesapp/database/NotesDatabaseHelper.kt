@@ -4,13 +4,17 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.content.ContentValues
+import android.util.Log
 import com.example.notesapp.model.Note
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class NotesDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     companion object {
         private const val DATABASE_NAME = "notes.db"
-        private const val DATABASE_VERSION = 2
+        private const val DATABASE_VERSION = 3
         const val TABLE_NAME = "notes"
         const val COLUMN_ID = "id"
         const val COLUMN_TITLE = "title"
@@ -23,7 +27,8 @@ class NotesDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE
                 $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
                 $COLUMN_TITLE TEXT,
                 $COLUMN_CONTENT TEXT,
-                userId TEXT
+                userId TEXT,
+                date TEXT
             )
         """
         db.execSQL(createTableStatement)
@@ -33,6 +38,9 @@ class NotesDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE
         if (oldVersion < 2) {
             db.execSQL("ALTER TABLE $TABLE_NAME ADD COLUMN userId TEXT")
         }
+        if (oldVersion < 3) {
+            db.execSQL("ALTER TABLE $TABLE_NAME ADD COLUMN date TEXT")
+        }
     }
 
     fun insertNote(title: String, content: String, userId: String): Long {
@@ -41,6 +49,7 @@ class NotesDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE
             put(COLUMN_TITLE, title)
             put(COLUMN_CONTENT, content)
             put("userId", userId)
+            put("date", SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(Date()))
         }
         return db.insert(TABLE_NAME, null, values)
     }
@@ -49,15 +58,19 @@ class NotesDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE
         val db = readableDatabase
         val cursor = db.query(TABLE_NAME, null, "userId = ?",  arrayOf(userId), null, null, "$COLUMN_ID DESC")
         val notes = mutableListOf<Note>()
-        with(cursor) {
-            while (moveToNext()) {
-                val id = getLong(getColumnIndexOrThrow(COLUMN_ID))
-                val title = getString(getColumnIndexOrThrow(COLUMN_TITLE))
-                val content = getString(getColumnIndexOrThrow(COLUMN_CONTENT))
-                notes.add(Note(id, title, content))
+        cursor?.let {
+            if (it.moveToFirst()) {
+                do {
+                    val id = it.getLong(it.getColumnIndexOrThrow(COLUMN_ID))
+                    val title = it.getString(it.getColumnIndexOrThrow(COLUMN_TITLE))
+                    val content = it.getString(it.getColumnIndexOrThrow(COLUMN_CONTENT))
+                    val date = it.getString(it.getColumnIndexOrThrow("date")) // Assuming date column is now added
+                    notes.add(Note(id, title, content, date)) // Add the date to the Note object
+                } while (it.moveToNext())
             }
-        }
-        cursor.close()
+            it.close()
+        } 
+
         return notes
     }
 

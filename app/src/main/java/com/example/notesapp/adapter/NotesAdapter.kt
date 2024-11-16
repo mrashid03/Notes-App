@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.notesapp.R
@@ -18,14 +19,13 @@ class NotesAdapter(
     inner class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(note: Note){
             val titleView = itemView.findViewById<TextView>(R.id.noteTitle)
-            val contentView = itemView.findViewById<TextView>(R.id.noteContent)
-            val updateButton = itemView.findViewById<Button>(R.id.notesUpdateBtn)
-            val deleteButton = itemView.findViewById<Button>(R.id.notesDeleteBtn)
+            val dateView = itemView.findViewById<TextView>(R.id.date)
+            val deleteButton = itemView.findViewById<ImageButton>(R.id.notesDeleteBtn)
 
             titleView.text = note.title
-            contentView.text = note.content
+            dateView.text = note.date
 
-            updateButton.setOnClickListener {
+            titleView.setOnClickListener {
                 onUpdateClicked(note)
             }
 
@@ -59,8 +59,4 @@ class NotesAdapter(
         }
     }
 
-    fun clearNotes() {
-        notes.clear()
-        notifyDataSetChanged()
-    }
 }
